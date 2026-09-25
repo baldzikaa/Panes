@@ -17,7 +17,7 @@ final class Layout {
     }
 
     /**
-     * turns the row strings into one char per slot, spaces mean empty.
+     * turns the row strings into one char per slot, spaces are dropped.
      */
     static char[] parse(String[] rows, int width, int size) {
         if (rows.length * width != size) {

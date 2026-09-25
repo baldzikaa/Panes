@@ -50,6 +50,7 @@ public final class Menu {
                 char key = layout[slot];
                 if (key == builder.contentKey) {
                     content[contentCount++] = slot;
+                    elements[slot] = builder.keys.get(key);
                 } else if (key != '.' && key != '_') {
                     Element element = builder.keys.get(key);
                     if (element == null) {

@@ -322,4 +322,19 @@ class MenuTest {
         assertTrue(opened.isDone());
         assertInstanceOf(Session.class, player.getOpenInventory().getTopInventory().getHolder(false));
     }
+
+    @Test
+    void emptyContentSlotsFallBackToTheirBinding() {
+        List<Element> items = List.of(Button.of(arrow), Button.of(arrow));
+        Menu menu = Menu.chest(1)
+            .layout("xxxxxxxxx")
+            .bind('x', Button.of(glass))
+            .content('x', session -> items)
+            .build();
+
+        Session session = menu.open(player).join();
+
+        assertEquals(Material.ARROW, session.getInventory().getItem(1).getType());
+        assertEquals(Material.GRAY_STAINED_GLASS_PANE, session.getInventory().getItem(2).getType());
+    }
 }

@@ -187,7 +187,9 @@ public final class Session implements InventoryHolder {
         int offset = page * slots.length;
         for (int i = 0; i < slots.length; i++) {
             int index = offset + i;
-            drawn[slots[i]] = index < content.size() ? content.get(index) : null;
+            if (index < content.size()) {
+                drawn[slots[i]] = content.get(index);
+            }
         }
         for (int slot = 0; slot < drawn.length; slot++) {
             Element element = drawn[slot];
