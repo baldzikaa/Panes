@@ -1,0 +1,7 @@
+name: PanesExample
+version: ${version}
+main: win.baldzika.panes.example.ExamplePlugin
+api-version: "26.1"
+folia-supported: true
+author: baldzika
+description: Demo menus for the panes library

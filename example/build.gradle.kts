@@ -16,7 +16,6 @@ dependencies {
 tasks {
     shadowJar {
         archiveClassifier = ""
-        relocate("win.baldzika.panes", "win.baldzika.panes.example.lib")
     }
 
     processResources {
