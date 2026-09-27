@@ -5,6 +5,9 @@ import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -336,5 +339,33 @@ class MenuTest {
 
         assertEquals(Material.ARROW, session.getInventory().getItem(1).getType());
         assertEquals(Material.GRAY_STAINED_GLASS_PANE, session.getInventory().getItem(2).getType());
+    }
+
+    @Test
+    void cancelledOpenIsNotTreatedAsOpen() {
+        server.getPluginManager().registerEvents(new Listener() {
+            @EventHandler
+            void cancel(InventoryOpenEvent event) {
+                event.setCancelled(true);
+            }
+        }, MockBukkit.createMockPlugin("Blocker"));
+        AtomicInteger opened = new AtomicInteger();
+        AtomicInteger draws = new AtomicInteger();
+        Menu menu = Menu.chest(1)
+            .refreshEvery(1)
+            .slot(0, Button.dynamic(session -> {
+                draws.incrementAndGet();
+                return glass;
+            }))
+            .onOpen(session -> opened.incrementAndGet())
+            .build();
+
+        CompletableFuture<Session> future = menu.open(player);
+        server.getScheduler().performTicks(5);
+
+        assertTrue(future.isCompletedExceptionally());
+        assertEquals(0, opened.get());
+        assertEquals(1, draws.get());
+        assertEquals(InventoryType.CRAFTING, player.getOpenInventory().getType());
     }
 }

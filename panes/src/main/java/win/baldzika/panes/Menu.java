@@ -92,8 +92,11 @@ public final class Menu {
         boolean scheduled = Panes.now(player, () -> {
             try {
                 Session session = new Session(this, player);
-                session.show();
-                future.complete(session);
+                if (session.show()) {
+                    future.complete(session);
+                } else {
+                    future.completeExceptionally(new IllegalStateException("opening the menu was cancelled by another plugin"));
+                }
             } catch (Throwable t) {
                 future.completeExceptionally(t);
             }

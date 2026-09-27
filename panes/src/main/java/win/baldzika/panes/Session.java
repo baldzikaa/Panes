@@ -27,6 +27,7 @@ public final class Session implements InventoryHolder {
     private int page;
     private int pages = 1;
     private long lastClick;
+    private boolean clicked;
     private boolean open;
 
     Session(Menu menu, Player player) {
@@ -136,15 +137,22 @@ public final class Session implements InventoryHolder {
         }
     }
 
-    void show() {
+    /**
+     * false if another plugin cancelled the open.
+     */
+    boolean show() {
         draw();
         player.openInventory(inventory);
+        if (player.getOpenInventory().getTopInventory() != inventory) {
+            return false;
+        }
         open = true;
         long ticks = menu.refreshTicks();
         if (ticks > 0) {
             refreshTask = player.getScheduler().runAtFixedRate(Panes.plugin(), task -> draw(), null, ticks, ticks);
         }
         menu.opened(this);
+        return true;
     }
 
     void closed() {
@@ -168,9 +176,10 @@ public final class Session implements InventoryHolder {
             return;
         }
         long now = System.nanoTime();
-        if (lastClick != 0 && now - lastClick < menu.clickCooldownNanos()) {
+        if (clicked && now - lastClick < menu.clickCooldownNanos()) {
             return;
         }
+        clicked = true;
         lastClick = now;
         element.click(new Click(this, slot, type));
     }

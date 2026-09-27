@@ -47,7 +47,7 @@ Menu menu = Menu.chest(3)
 menu.open(player);
 ```
 
-`open` works from any thread and returns a `CompletableFuture<Session>` that completes once the menu is showing.
+`open` works from any thread and returns a `CompletableFuture<Session>` that completes once the menu is showing. It fails instead if another plugin cancels the open, so your `onOpen` code never runs for a menu the player can't see.
 
 ### Pages
 
